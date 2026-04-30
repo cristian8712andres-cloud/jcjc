@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso de Asociado | SISpos</title>
+    <!-- Ruta unificada al CSS -->
+    <link rel="stylesheet" href="css/estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .login-box {
+            max-width: 500px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        #logoSeleccionado img {
+            max-height: 100px;
+            max-width: 100%;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .portal-title {
+            color: var(--primario);
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--secundario);
+            display: inline-block;
+        }
+        /* Estilo para el contador del carrito en el header */
+        .carrito-link {
+            position: relative;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+        .contador-badge {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: var(--peligro);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: none; /* Se muestra vía JS si hay productos */
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="contenedor header-productos">
+            <div class="logo-sitio">SISpos - Gestión Comercial</div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="index.html" class="nav-link-salir">← Volver</a>
+                <div class="carrito-link">
+                    🛒 <span id="contador-global" class="contador-badge">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <section class="login-container">
+            <div class="login-box">
+                <!-- Contenedor dinámico para el logo de la empresa -->
+                <div id="logoSeleccionado">
+                    <!-- Se llena con JavaScript -->
+                </div>
+                
+                <h2>Acceso para Asociados</h2>
+                <p style="color: #7f8c8d; margin-bottom: 30px;">Ingresa tu número de identificación para ver tus ofertas exclusivas.</p>
+
+                <form id="formLogin" style="text-align: left;">
+                    <div class="input-group">
+                        <label for="cedula">Número de Cédula</label>
+                        <input type="number" id="cedula" placeholder="Ej: 12345678" required 
+                               style="font-size: 1.1rem; letter-spacing: 1px; padding: 14px;">
+                    </div>
+                    <button type="submit" class="btn-ingresar" style="background-color: var(--exito); width: 100%; margin-top: 10px; padding: 16px; border: none; color: white; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                        Ingresar al Portal
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: #2c3e50; color: white; padding: 40px 0; text-align: center; margin-top: 60px;">
+        <div class="contenedor">
+            <p>&copy; 2026 SISpos - Soluciones de Negocios para Fondos. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Botón WhatsApp -->
+    <a href="https://wa.me/573025936175" class="whatsapp-flotante" target="_blank" 
+       style="position: fixed; bottom: 25px; right: 25px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="35" alt="WhatsApp">
+    </a>
+
+    <script>
+        // Función para actualizar el contador si existiera algo (prevención)
+        function actualizarContador() {
+            const carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+            const badge = document.getElementById('contador-global');
+            if (badge) {
+                badge.innerText = carrito.length;
+                badge.style.display = carrito.length > 0 ? "flex" : "none";
+            }
+        }
+
+        window.onload = function() {
+            actualizarContador();
+            const empresa = localStorage.getItem('empresaSeleccionada');
+            const contenedorLogo = document.getElementById('logoSeleccionado');
+            
+            if (empresa && contenedorLogo) {
+                const logos = {
+                    'Celsia': 'logo-celsia.png',
+                    'Tecnoquímicas': 'logo-tecnoquimicas.png',
+                    'Dollarcity': 'logo-dollarcity.png',
+                    'Colgate-Palmolive': 'logo-colgate.png',
+                    'Italcol': 'logo-italco.png',
+                    'Bucanero': 'logo-bucanero.png',
+                    'Colombina': 'logo-colombina.png',
+                    'Gases de Occidente': 'logo-gases de occidente.png',
+                    'Smurfit Kappa': 'logo-smurf.png',
+                    'Riopaila Castilla': 'logo-riopaila castilla.png'
+                };
+
+                const archivoImagen = logos[empresa];
+                
+                if (archivoImagen) {
+                    contenedorLogo.innerHTML = `
+                        <div style="background: white; padding: 20px; border-radius: 15px; display: inline-block; border: 1px solid #eee; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <img src="imagenes/${archivoImagen}" alt="${empresa}">
+                        </div>
+                        <div>
+                            <span class="portal-title">Portal ${empresa}</span>
+                        </div>
+                    `;
+                }
+            } else if (!empresa) {
+                // Si alguien entra al login sin elegir fondo, lo devolvemos al inicio
+                window.location.href = "index.html";
+            }
+        };
+
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            const cedula = document.getElementById('cedula').value;
+            
+            if(cedula.length >= 4) { 
+                localStorage.setItem('cedulaUsuario', cedula);
+                window.location.href = "productos.html";
+            } else {
+                alert("Por favor, ingresa un número de cédula válido.");
+            }
+        });
+    </script>
+</body>
+</html>

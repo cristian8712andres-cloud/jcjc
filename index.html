@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma para Fondos de Empleados | SISpos</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        header .contenedor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .fondos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            padding: 30px 0;
+        }
+
+        .fondo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: 0.3s;
+            border: 1px solid #eee;
+            height: 180px;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .fondo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .fondo-card img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .fondo-card::before, .fondo-card::after {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="contenedor">
+            <div class="logo-sitio">SISpos - Gestión Comercial</div>
+            <p style="margin-top: 5px; opacity: 0.9;">Bienvenido Asociado. Selecciona tu Fondo para comenzar.</p>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <section class="buscador-container" style="text-align: center; padding: 50px 0 20px;">
+            <h1 style="color: #2c3e50; margin-bottom: 10px; font-size: 2.2rem;">Encuentra tu Fondo de Empleados</h1>
+            <p class="subtitulo" style="color: #7f8c8d; margin-bottom: 30px;">Busca o selecciona el fondo al que perteneces para ver tu catálogo exclusivo</p>
+            
+            <div class="buscador" style="display: flex; justify-content: center; gap: 10px; max-width: 550px; margin: 0 auto;">
+                <input type="text" id="inputFondo" placeholder="Escribe el nombre de tu fondo..." onkeyup="filtrarFondos()" 
+                       style="flex: 1; padding: 14px; border-radius: 8px; border: 2px solid #e0e6ed; outline: none; font-family: inherit;">
+                <button type="button" onclick="filtrarFondos()" 
+                        style="padding: 14px 30px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s;">
+                    Buscar
+                </button>
+            </div>
+        </section>
+
+        <section class="fondos-grid" id="gridFondos">
+            <a href="login.html" class="fondo-card" data-nombre="celsia" onclick="iniciarSesionFondo('Celsia')">
+                <img src="imagenes/logo-celsia.png" alt="Celsia">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="tecnoquimicas" onclick="iniciarSesionFondo('Tecnoquímicas')">
+                <img src="imagenes/logo-tecnoquimicas.png" alt="Tecnoquímicas">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="dollarcity" onclick="iniciarSesionFondo('Dollarcity')">
+                <img src="imagenes/logo-dollarcity.png" alt="Dollarcity">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="colgate palmolive" onclick="iniciarSesionFondo('Colgate-Palmolive')">
+                <img src="imagenes/logo-colgate.png" alt="Colgate">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="italcol" onclick="iniciarSesionFondo('Italcol')">
+                <img src="imagenes/logo-italco.png" alt="Italcol">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="bucanero" onclick="iniciarSesionFondo('Bucanero')">
+                <img src="imagenes/logo-bucanero.png" alt="Bucanero">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="colombina" onclick="iniciarSesionFondo('Colombina')">
+                <img src="imagenes/logo-colombina.png" alt="Colombina">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="gases de occidente gdo" onclick="iniciarSesionFondo('Gases de Occidente')">
+                <img src="imagenes/logo-gases de occidente.png" alt="GdO">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="smurfit kappa" onclick="iniciarSesionFondo('Smurfit Kappa')">
+                <img src="imagenes/logo-smurf.png" alt="Smurfit">
+            </a>
+            <a href="login.html" class="fondo-card" data-nombre="riopaila castilla" onclick="iniciarSesionFondo('Riopaila Castilla')">
+                <img src="imagenes/logo-riopaila castilla.png" alt="Riopaila">
+            </a>
+        </section>
+    </main>
+
+    <footer style="margin-top: 60px; background: #2c3e50; color: white; padding: 40px 0; text-align: center;">
+        <div class="contenedor">
+            <p>&copy; 2026 SISpos - Soluciones de Negocios para Fondos. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/573025936175" class="whatsapp-flotante" target="_blank" 
+       style="position: fixed; bottom: 25px; right: 25px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="35" alt="WhatsApp">
+    </a>
+
+    <script>
+    // Nueva función unificada para iniciar la experiencia
+    function iniciarSesionFondo(nombre) {
+        // Guardamos la empresa seleccionada
+        localStorage.setItem('empresaSeleccionada', nombre);
+        
+        // IMPORTANTE: Limpiamos el carrito anterior para que el nuevo cliente 
+        // comience con una lista vacía y no se mezclen productos de sesiones pasadas.
+        localStorage.removeItem('carritoSISpos');
+    }
+
+    function filtrarFondos() {
+        const input = document.getElementById('inputFondo').value.toLowerCase();
+        const grid = document.getElementById('gridFondos');
+        const cards = grid.getElementsByClassName('fondo-card');
+        
+        for (let i = 0; i < cards.length; i++) {
+            const nombreFondo = cards[i].getAttribute('data-nombre') || "";
+            cards[i].style.display = nombreFondo.includes(input) ? "flex" : "none";
+        }
+    }
+    </script>
+</body>
+</html>

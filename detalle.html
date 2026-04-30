@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto | SISpos</title>
+    <!-- Ruta unificada al CSS -->
+    <link rel="stylesheet" href="css/estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para la vista de detalle */
+        .detalle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px 0;
+            align-items: start;
+        }
+
+        /* Ajuste para móviles */
+        @media (max-width: 768px) {
+            .detalle-grid { grid-template-columns: 1fr; }
+        }
+
+        .cuota-destacada { 
+            font-size: 2.2rem; 
+            color: var(--primario); 
+            font-weight: 600; 
+            display: block; 
+            margin-top: 5px; 
+        }
+
+        .simulador-cuotas { 
+            background: #f4f7f6; 
+            padding: 25px; 
+            border-radius: 15px; 
+            border-left: 6px solid var(--primario); 
+            margin: 25px 0; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-comprar-grande { 
+            width: 100%; 
+            padding: 20px; 
+            background: var(--exito); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 1.3rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-comprar-grande:hover { 
+            transform: translateY(-3px); 
+            background: #21b358; 
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .imagen-producto-grande img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="contenedor header-productos" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo-sitio">SISpos - Gestión Comercial</div>
+            <nav><a href="productos.html" class="nav-link-salir" style="text-decoration: none; font-weight: 600;">← Volver al Catálogo</a></nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <section class="detalle-grid">
+            <!-- IMAGEN DINÁMICA -->
+            <div class="imagen-producto-grande" style="text-align: center; background: white; padding: 30px; border-radius: 20px; border: 1px solid #f0f0f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                <img id="imgPrincipal" src="" alt="Cargando producto...">
+            </div>
+
+            <!-- INFORMACIÓN DINÁMICA -->
+            <div class="info-detalle">
+                <h1 id="tituloProducto" style="color: #2c3e50; margin-bottom: 10px; font-size: 2.2rem;">Nombre del Producto</h1>
+                <p class="sku" style="color: #95a5a6; font-size: 0.95rem; margin-bottom: 20px; letter-spacing: 1px;">REFERENCIA: #SIS-2026-PRO</p>
+                
+                <div class="precios-detalle" style="margin-bottom: 30px; display: flex; align-items: baseline; gap: 20px;">
+                    <span class="precio-old" id="pAntes" style="text-decoration: line-through; color: #bdc3c7; font-size: 1.4rem;">$0</span>
+                    <span class="precio-new" id="pAhora" style="color: #e74c3c; font-size: 2.5rem; font-weight: 600;">$0</span>
+                </div>
+
+                <!-- SIMULADOR FINANCIERO -->
+                <div class="simulador-cuotas">
+                    <label style="font-weight: 600; color: #34495e; display: block; margin-bottom: 12px; font-size: 1.1rem;">
+                        💳 Pago por Libranza (Deducción de Nómina)
+                    </label>
+                    <div class="input-group">
+                        <select id="selectorCuotas" onchange="calcularCuota()" style="width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #e0e6ed; font-family: inherit; font-size: 1rem; cursor: pointer; outline: none;">
+                            <option value="1">Pago de Contado</option>
+                            <option value="6">Financiar a 6 Meses</option>
+                            <option value="12" selected>Financiar a 12 Meses</option>
+                            <option value="18">Financiar a 18 Meses</option>
+                            <option value="24">Financiar a 24 Meses</option>
+                            <option value="36">Financiar a 36 Meses</option>
+                        </select>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <p style="margin: 0; font-size: 0.95rem; color: #7f8c8d;">Cuota mensual estimada:</p>
+                        <span class="cuota-destacada" id="valorCuota">$0</span>
+                    </div>
+                </div>
+
+                <div class="descripcion-texto" style="margin-bottom: 40px;">
+                    <h3 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 20px; color: #2c3e50;">Beneficios de tu Fondo:</h3>
+                    <ul id="listaCaracteristicas" style="list-style: none; padding: 0; color: #576574;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--exito); font-weight: bold;">✔</span> Tasa de interés preferencial para asociados.
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--exito); font-weight: bold;">✔</span> Sin estudio de crédito ni codeudor.
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--exito); font-weight: bold;">✔</span> Garantía extendida de 12 meses.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="acciones-detalle">
+                    <button onclick="guardarYContinuar()" class="btn-comprar-grande">Agregar a mi Canasta 🛒</button>
+                    <p style="text-align: center; font-size: 0.85rem; color: #bdc3c7; margin-top: 15px;">Al dar clic, pasarás a confirmar tu solicitud de crédito.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: #2c3e50; color: white; padding: 40px 0; text-align: center; margin-top: 60px;">
+        <div class="contenedor">
+            <p>&copy; 2026 SISpos - Gestión Comercial. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        window.onload = function() {
+            // Recuperar datos del producto seleccionado desde el catálogo
+            const nombre = localStorage.getItem('producto_nombre');
+            const precio = localStorage.getItem('producto_precio');
+            const imagen = localStorage.getItem('producto_imagen');
+
+            if (nombre && precio) {
+                document.getElementById('tituloProducto').innerText = nombre;
+                document.getElementById('pAhora').innerText = precio;
+                document.getElementById('imgPrincipal').src = imagen || "imagenes/default.png";
+                
+                // Cálculo automático del "Precio sugerido" (25% más alto)
+                const precioNum = parseInt(precio.replace(/[^0-9]/g, ''));
+                const antesNum = Math.ceil(precioNum * 1.25);
+                document.getElementById('pAntes').innerText = new Intl.NumberFormat('es-CO', {
+                    style: 'currency', currency: 'COP', maximumFractionDigits: 0
+                }).format(antesNum);
+            } else {
+                // Redirigir si se accede sin haber seleccionado un producto
+                window.location.href = 'productos.html';
+            }
+
+            calcularCuota();
+        };
+
+        function calcularCuota() {
+            const precioTexto = document.getElementById('pAhora').innerText.replace(/[^0-9]/g, '');
+            const precioNum = parseInt(precioTexto);
+            const cuotas = parseInt(document.getElementById('selectorCuotas').value);
+            
+            if(cuotas === 1) {
+                document.getElementById('valorCuota').innerText = "Pago Único";
+                return;
+            }
+
+            // Cálculo mensual (puedes ajustar intereses aquí)
+            const valorCuota = Math.ceil(precioNum / cuotas);
+            document.getElementById('valorCuota').innerText = new Intl.NumberFormat('es-CO', {
+                style: 'currency', currency: 'COP', maximumFractionDigits: 0
+            }).format(valorCuota);
+        }
+
+        function guardarYContinuar() {
+            // 1. Obtener el carrito actual o crear un arreglo vacío
+            let carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+            
+            // 2. Capturar los datos actuales de la vista de detalle
+            const nuevoProducto = {
+                id: Date.now(), // ID único para gestión de inventario/borrado
+                nombre: document.getElementById('tituloProducto').innerText,
+                precio: parseInt(document.getElementById('pAhora').innerText.replace(/[^0-9]/g, '')),
+                imagen: document.getElementById('imgPrincipal').src,
+                cuota: document.getElementById('valorCuota').innerText,
+                meses: document.getElementById('selectorCuotas').value
+            };
+
+            // 3. Agregar el nuevo producto al arreglo sin borrar los anteriores
+            carrito.push(nuevoProducto);
+            
+            // 4. Guardar la lista actualizada en el almacenamiento local
+            localStorage.setItem('carritoSISpos', JSON.stringify(carrito));
+            
+            // 5. Redirigir a la vista de confirmación
+            window.location.href = 'carrito.html';
+        }
+    </script>
+</body>
+</html>

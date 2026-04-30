@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Solicitud | SISpos</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ESTILOS GENERALES */
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .contenedor { width: 95%; max-width: 1000px; margin: auto; }
+        
+        /* CONFIGURACIÓN DE IMPRESIÓN OPTIMIZADA */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0.5cm;
+            }
+            header, .nav-link-salir, .btn-qty, .btn-eliminar-item, .instruccion-final, .btn-enviar-ws, .selector-cuotas-mini, .no-print, .seccion-titulo-pantalla, .btn-whatsapp-flotante {
+                display: none !important;
+            }
+            body { background: white; font-size: 9pt; }
+            .contenedor { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            
+            #formFinal { display: flex; flex-direction: column; gap: 8px; }
+
+            .oc-header-print { 
+                display: flex !important; 
+                justify-content: space-between; 
+                align-items: center; 
+                border-bottom: 2px solid #2c3e50; 
+                padding-bottom: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .tabla-productos { width: 100%; border-collapse: collapse; margin-bottom: 10px; display: table !important; }
+            .tabla-productos th, .tabla-productos td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+            .tabla-productos th { background: #f2f2f2 !important; -webkit-print-color-adjust: exact; }
+
+            .seccion-datos-asociado { 
+                display: grid !important; 
+                grid-template-columns: repeat(4, 1fr) !important; 
+                gap: 8px !important; 
+                font-size: 8.5pt;
+                border: 1px solid #ccc !important;
+                padding: 10px !important;
+            }
+            .seccion-datos-asociado h3 { display: none; }
+            .input-group { margin-bottom: 2px !important; }
+            .input-group label { font-weight: bold; display: block; font-size: 8pt; }
+            
+            input, textarea { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; font-size: 9pt; width: 100%; }
+            
+            .total-destacado { 
+                background: #f0f0f0 !important; 
+                border: 1px solid #2c3e50; 
+                padding: 8px 15px; 
+                text-align: right; 
+                -webkit-print-color-adjust: exact;
+                color: black !important;
+            }
+            .total-destacado * { color: black !important; }
+            
+            .terminos-legales-print {
+                display: block !important;
+                font-family: Arial, sans-serif !important;
+                font-size: 11pt !important; 
+                color: black !important;
+                text-align: justify;
+                margin-top: 10px;
+                line-height: 1.2;
+            }
+        }
+
+        /* Estilos en Pantalla */
+        .oc-header-print, .terminos-legales-print, .tabla-productos { display: none; }
+        .seccion-form { background: white; border: 1px solid #eee; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .readonly-custom { background-color: #f9f9f9; cursor: not-allowed; font-weight: 600; }
+        
+        .nav-link-salir { 
+            text-decoration: none; 
+            color: #2c3e50 !important; 
+            background-color: #ffffff; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            border: 1px solid #dcdde1;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .nav-link-salir:hover { 
+            background-color: #f1f2f6; 
+            border-color: #2c3e50;
+            transform: translateY(-1px);
+        }
+
+        .item-carrito {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+        .item-controles { display: flex; gap: 10px; align-items: center; }
+        .btn-qty { background: #f8f9fa; border: 1px solid #ccc; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+        .btn-eliminar-item { color: #e74c3c; border: 1px solid #e74c3c; background: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-weight: bold; display: inline-block !important; }
+        .btn-eliminar-item:hover { background: #e74c3c; color: #fff; }
+        .selector-cuotas-mini { border: 1px solid #ccc; border-radius: 4px; padding: 2px; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
+        .input-group input, .input-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        
+        .btn-enviar-ws { background-color: #2c3e50; color: white; border: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .btn-enviar-ws:hover { background-color: #1a252f; }
+
+        /* BOTÓN WHATSAPP FLOTANTE */
+        .btn-whatsapp-flotante {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .btn-whatsapp-flotante:hover {
+            transform: scale(1.1);
+            background-color: #128c7e;
+        }
+        .btn-whatsapp-flotante svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botón Flotante de WhatsApp -->
+    <a href="https://wa.me/573025936175" class="btn-whatsapp-flotante" target="_blank" title="Enviar comprobante por WhatsApp">
+        <svg viewBox="0 0 32 32">
+            <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.48 2.025 7.787l-2.025 7.413 7.588-1.987c2.208 1.225 4.75 1.937 7.412 1.937 8.837 0 16-7.163 16-16s-7.163-16-16-16zM24.087 22.112c-0.337 0.95-1.687 1.837-2.737 2.063-0.713 0.15-1.65 0.275-4.787-1.025-4-1.662-6.575-5.712-6.775-5.987-0.2-0.263-1.612-2.15-1.612-4.1s1.012-2.912 1.375-3.312c0.363-0.4 0.787-0.5 1.05-0.5s0.525 0.013 0.75 0.025c0.237 0.013 0.55-0.088 0.863 0.662 0.325 0.775 1.112 2.712 1.212 2.912s0.163 0.425 0.013 0.725c-0.15 0.3-0.225 0.5-0.45 0.763s-0.475 0.55-0.675 0.737c-0.213 0.2-0.438 0.413-0.188 0.837 0.25 0.425 1.112 1.837 2.388 2.975 1.637 1.462 3.013 1.912 3.438 2.125s0.675 0.163 0.925-0.125c0.25-0.288 1.075-1.25 1.363-1.675s0.575-0.35 0.963-0.213c0.388 0.138 2.462 1.162 2.887 1.375s0.713 0.35 0.813 0.525c0.1 0.175 0.1 1.012-0.237 1.962z"></path>
+        </svg>
+    </a>
+
+    <header class="no-print">
+        <div class="contenedor header-productos" style="padding: 15px 0; display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo-sitio" style="font-weight: 600; font-size: 1.5rem; color: #ffffff;">SISpos</div>
+            <nav><a href="productos.html" class="nav-link-salir">← Volver al Catálogo</a></nav>
+        </div>
+    </header>
+
+    <main class="contenedor" id="area-impresion">
+        <section style="margin: 10px auto;">
+            <div class="oc-header-print">
+                <div>
+                    <h1 style="color: #2c3e50; margin: 0; font-size: 22pt;">SISpos</h1>
+                    <p style="margin: 0; font-size: 10pt;">Orden de Compra Oficial</p>
+                </div>
+                <div style="text-align: right;">
+                    <p id="fecha-oc-print" style="font-weight: bold; margin: 0; font-size: 9pt;"></p>
+                    <p id="empresa-header-print" style="margin: 0; text-transform: uppercase; font-size: 9pt; color: #555;"></p>
+                </div>
+            </div>
+
+            <div class="no-print seccion-titulo-pantalla" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #2c3e50; margin: 0;">Resumen de Solicitud</h2>
+                <p style="color: #7f8c8d; margin: 5px 0;">Verifica los productos y genera tu orden.</p>
+            </div>
+            
+            <form id="formFinal">
+                <div class="seccion-form">
+                    <h3 class="no-print" style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px;">📦 Detalle del Pedido</h3>
+                    
+                    <div class="input-group no-print">
+                        <label>Fondo de Empleados / Empresa</label>
+                        <input type="text" id="empresa" readonly class="readonly-custom">
+                    </div>
+
+                    <table class="tabla-productos">
+                        <thead>
+                            <tr>
+                                <th style="width: 45%;">Descripción del Producto</th>
+                                <th style="text-align: center;">Cant.</th>
+                                <th style="text-align: center;">Plazo</th>
+                                <th>V. Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-body-print"></tbody>
+                    </table>
+
+                    <div id="contenedor-items-carrito" class="no-print"></div>
+
+                    <div class="total-destacado">
+                        <span style="font-weight: bold;">TOTAL DE LA ORDEN:</span>
+                        <strong id="texto-precio-total" style="font-size: 1.3rem; margin-left: 10px;">$ 0</strong>
+                    </div>
+                </div>
+
+                <div class="seccion-form seccion-datos-asociado">
+                    <h3 class="no-print" style="margin-top: 0; border-bottom: 1px solid #eee; grid-column: span 3; padding-bottom: 10px;">👤 Datos del Asociado</h3>
+                    
+                    <div class="input-group">
+                        <label>Nombre Completo:</label>
+                        <input type="text" id="nombre" placeholder="Nombre completo" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Cédula:</label>
+                        <input type="text" id="cedula" inputmode="numeric" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Teléfono 1:</label>
+                        <input type="text" id="tel1" inputmode="numeric" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Teléfono 2:</label>
+                        <input type="text" id="tel2" inputmode="numeric">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Ciudad:</label>
+                        <input list="lista-ciudades" id="ciudad" placeholder="Seleccionar..." required>
+                        <datalist id="lista-ciudades">
+                            <option value="Cali"><option value="Palmira"><option value="Buenaventura"><option value="Buga"><option value="Tulua"><option value="Jamundí"><option value="Yumbo">
+                        </datalist>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Barrio:</label>
+                        <input type="text" id="barrio" required>
+                    </div>
+
+                    <div class="input-group" style="grid-column: span 2;">
+                        <label>Dirección de Entrega:</label>
+                        <input type="text" id="direccion" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Departamento:</label>
+                        <input type="text" id="depto" value="Valle del Cauca" readonly>
+                    </div>
+
+                    <div class="input-group" style="grid-column: span 3;">
+                        <label>Observaciones:</label>
+                        <textarea id="observaciones" rows="1" style="border-bottom: 1px solid #eee !important;"></textarea>
+                    </div>
+                </div>
+
+                <div class="terminos-legales-print">
+                    <strong>Información Importante para su Pedido:</strong><br>
+                    Le informamos que nuestros productos se fabrican exclusivamente bajo pedido, con un tiempo estimado de entrega de 20 días. Tenga en cuenta que las garantías son otorgadas por el fabricante y su cobertura depende del producto adquirido; para soporte técnico o reclamos, favor comunicarse únicamente al 302 593 6175.
+                    Finalmente, esta orden queda sujeta a la aprobación del Fondo de Empleados o Cooperativa para proceder con la producción y posterior despacho.
+                </div>
+
+                <div style="margin-top: 15px;" class="no-print">
+                    <p class="instruccion-final" style="font-size: 0.85rem; color: #e74c3c; margin-bottom: 10px; text-align: center;">
+                        * Al generar la orden se abrirá el cuadro de impresión. Selecciona <b>"Guardar como PDF"</b>.
+                    </p>
+                    <button type="submit" class="btn-enviar-ws" style="width: 100%; cursor: pointer; padding: 15px; font-size: 1.1rem;">
+                        📄 Generar Orden e Imprimir / PDF
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+    const formateador = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+
+    [ 'cedula', 'tel1', 'tel2' ].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) { el.addEventListener('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); }); }
+    });
+
+    function cargarResumenCarrito() {
+        let carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+        const contenedor = document.getElementById('contenedor-items-carrito');
+        const tablaBody = document.getElementById('tabla-body-print');
+        const empresa = localStorage.getItem('empresaSeleccionada') || "Particular";
+        
+        document.getElementById('empresa').value = empresa;
+        document.getElementById('empresa-header-print').innerText = "Entidad: " + empresa;
+
+        if (carrito.length === 0) {
+            window.location.href = 'productos.html';
+            return;
+        }
+
+        contenedor.innerHTML = "";
+        tablaBody.innerHTML = "";
+        let totalGeneral = 0;
+
+        carrito.forEach((producto, index) => {
+            const cantidad = parseInt(producto.cantidad) || 1;
+            const meses = producto.meses || 12;
+            const subtotal = producto.precio * cantidad;
+            totalGeneral += subtotal;
+            
+            const divItem = document.createElement('div');
+            divItem.className = 'item-carrito';
+            divItem.innerHTML = `
+                <div class="item-info">
+                    <h4 style="margin: 0; color: #2c3e50;">${producto.nombre}</h4>
+                    <p style="margin: 0; font-size: 0.9rem; color: #666;">Unitario: ${formateador.format(producto.precio)} | Sub: ${formateador.format(subtotal)}</p>
+                </div>
+                <div class="item-controles">
+                    <select class="selector-cuotas-mini" onchange="actualizarCuotasItem(${index}, this.value)">
+                        ${[1, 3, 6, 12, 18, 24, 36].map(m => `<option value="${m}" ${m == meses ? 'selected' : ''}>${m} meses</option>`).join('')}
+                    </select>
+                    <button type="button" class="btn-qty" onclick="cambiarCantidad(${index}, -1)">-</button>
+                    <span style="font-weight: bold; min-width: 20px; text-align: center;">${cantidad}</span>
+                    <button type="button" class="btn-qty" onclick="cambiarCantidad(${index}, 1)">+</button>
+                    <button type="button" class="btn-eliminar-item" onclick="eliminarDelCarrito(${index})" title="Eliminar producto">✕</button>
+                </div>
+            `;
+            contenedor.appendChild(divItem);
+
+            const fila = `<tr>
+                <td>${producto.nombre}</td>
+                <td style="text-align: center;">${cantidad}</td>
+                <td style="text-align: center;">${meses} meses</td>
+                <td>${formateador.format(producto.precio)}</td>
+                <td style="font-weight: bold;">${formateador.format(subtotal)}</td>
+            </tr>`;
+            tablaBody.innerHTML += fila;
+        });
+        document.getElementById('texto-precio-total').innerText = formateador.format(totalGeneral);
+    }
+
+    function cambiarCantidad(index, cambio) {
+        let carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+        carrito[index].cantidad = Math.max(1, (parseInt(carrito[index].cantidad) || 1) + cambio);
+        localStorage.setItem('carritoSISpos', JSON.stringify(carrito));
+        cargarResumenCarrito();
+    }
+
+    function actualizarCuotasItem(index, nuevosMeses) {
+        let carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+        carrito[index].meses = parseInt(nuevosMeses);
+        localStorage.setItem('carritoSISpos', JSON.stringify(carrito));
+        cargarResumenCarrito();
+    }
+
+    function eliminarDelCarrito(index) {
+        if(confirm("¿Eliminar este producto del pedido?")) {
+            let carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+            carrito.splice(index, 1);
+            localStorage.setItem('carritoSISpos', JSON.stringify(carrito));
+            cargarResumenCarrito();
+        }
+    }
+
+    document.getElementById('formFinal').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const pedidoId = "SP-" + Math.floor(1000 + Math.random() * 9000);
+        const fechaActual = new Date().toLocaleString();
+        document.getElementById('fecha-oc-print').innerText = `ORDEN: ${pedidoId} | ${fechaActual}`;
+        
+        window.print();
+        
+        setTimeout(() => {
+            const mensaje = `*✅ NUEVA SOLICITUD - SISpos*%0A*ID:* ${pedidoId}%0A*CLIENTE:* ${document.getElementById('nombre').value}%0A*TOTAL:* ${document.getElementById('texto-precio-total').innerText}`;
+            window.open(`https://wa.me/573025936175?text=${mensaje}`, '_blank');
+            localStorage.removeItem('carritoSISpos');
+            window.location.href = "productos.html";
+        }, 1000);
+    });
+
+    window.onload = cargarResumenCarrito;
+    </script>
+</body>
+</html>

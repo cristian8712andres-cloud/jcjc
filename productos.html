@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos | SISpos</title>
+    <!-- Ruta unificada al CSS -->
+    <link rel="stylesheet" href="css/estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Ajustes específicos para el catálogo */
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .producto-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            position: relative;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .producto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .producto-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .btn-cat {
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: 1px solid #dee2e6;
+            background: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-cat.active {
+            background: var(--primario);
+            color: white;
+            border-color: var(--primario);
+        }
+
+        .etiqueta-desc {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--peligro);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 10;
+        }
+
+        .info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            height: 45px;
+            overflow: hidden;
+            color: #2c3e50;
+        }
+
+        .botones-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-detalle {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #f1f4f8;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        
+        .btn-detalle:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-carrito {
+            width: 45px;
+            border: none;
+            background: var(--exito);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        
+        .btn-carrito:hover {
+            filter: brightness(1.1);
+            transform: scale(1.05);
+        }
+
+        /* Contador del carrito mejorado */
+        #contador-carrito {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="contenedor header-productos" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo-sitio">SISpos - Gestión Comercial</div>
+            <nav style="display: flex; align-items: center; gap: 25px;">
+                <a href="carrito.html" style="text-decoration: none; position: relative;">
+                    <span style="font-size: 1.6rem;">🛒</span>
+                    <span id="contador-carrito">0</span>
+                </a>
+                <a href="index.html" class="nav-link-salir" onclick="localStorage.clear()" style="background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 5px; color: white; text-decoration: none;">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <section class="seccion-titulo" style="padding: 40px 0 20px; text-align: left;">
+            <h2 id="saludoFondo" style="color: #2c3e50; font-size: 1.8rem;">Cargando catálogo...</h2>
+            <p style="color: #7f8c8d; font-size: 1.1rem;">Descuentos exclusivos por nómina y convenios especiales.</p>
+        </section>
+
+        <div class="categorias" style="margin-bottom: 35px; display: flex; flex-wrap: wrap; gap: 12px;">
+            <button class="btn-cat active" onclick="filtrarCategoria('Todos', this)">Todos</button>
+            <button class="btn-cat" onclick="filtrarCategoria('Colchones', this)">Colchones</button>
+            <button class="btn-cat" onclick="filtrarCategoria('Salas', this)">Salas</button>
+            <button class="btn-cat" onclick="filtrarCategoria('Tecnología', this)">Tecnología</button>
+        </div>
+
+        <!-- CUADRÍCULA DE PRODUCTOS -->
+        <div class="productos-grid" id="gridProductos">
+            
+            <!-- Producto 1 -->
+            <div class="producto-card" data-categoria="Colchones">
+                <div class="etiqueta-desc">-20%</div>
+                <img src="imagenes/colchon 1.png" alt="Colchón">
+                <div class="info">
+                    <h3>Colchón Ortopédico Premium</h3>
+                    <div>
+                        <p class="precio-antes" style="text-decoration: line-through; color: #bdc3c7; font-size: 0.9rem;">$1.200.000</p>
+                        <p class="precio" style="color: var(--primario); font-weight: 600; font-size: 1.3rem;">$960.000</p>
+                    </div>
+                    <div class="botones-container">
+                        <a href="detalle.html" class="btn-detalle" onclick="guardarDetalle('Colchón Ortopédico Premium', '$960.000', 'imagenes/colchon 1.png')">Ver Detalle</a>
+                        <button class="btn-carrito" onclick="agregarAlCarrito('Colchón Ortopédico Premium', 960000, 'imagenes/colchon 1.png')">🛒</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 2 -->
+            <div class="producto-card" data-categoria="Salas">
+                <div class="etiqueta-desc">-15%</div>
+                <img src="imagenes/sala 1.png" alt="Sala">
+                <div class="info">
+                    <h3>Juego de Sala Moderno</h3>
+                    <div>
+                        <p class="precio-antes" style="text-decoration: line-through; color: #bdc3c7; font-size: 0.9rem;">$2.500.000</p>
+                        <p class="precio" style="color: var(--primario); font-weight: 600; font-size: 1.3rem;">$2.125.000</p>
+                    </div>
+                    <div class="botones-container">
+                        <a href="detalle.html" class="btn-detalle" onclick="guardarDetalle('Juego de Sala Moderno', '$2.125.000', 'imagenes/sala 1.png')">Ver Detalle</a>
+                        <button class="btn-carrito" onclick="agregarAlCarrito('Juego de Sala Moderno', 2125000, 'imagenes/sala 1.png')">🛒</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 3 -->
+            <div class="producto-card" data-categoria="Tecnología">
+                <div class="etiqueta-desc">Especial</div>
+                <img src="imagenes/tv 45p 3.png" alt="Tecnología">
+                <div class="info">
+                    <h3>Smart TV 55" 4K Ultra HD</h3>
+                    <div>
+                        <p class="precio-antes" style="text-decoration: line-through; color: #bdc3c7; font-size: 0.9rem;">$2.100.000</p>
+                        <p class="precio" style="color: var(--primario); font-weight: 600; font-size: 1.3rem;">$1.850.000</p>
+                    </div>
+                    <div class="botones-container">
+                        <a href="detalle.html" class="btn-detalle" onclick="guardarDetalle('Smart TV 55 Pulgadas 4K', '$1.850.000', 'imagenes/tv 45p 3.png')">Ver Detalle</a>
+                        <button class="btn-carrito" onclick="agregarAlCarrito('Smart TV 55 Pulgadas 4K', 1850000, 'imagenes/tv 45p 3.png')">🛒</button>
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+    </main>
+
+    <footer style="background: #2c3e50; color: white; padding: 40px 0; text-align: center; margin-top: 60px;">
+        <div class="contenedor">
+            <p>&copy; 2026 SISpos - Gestión Comercial. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Flotante -->
+    <a href="https://wa.me/573025936175" class="whatsapp-flotante" target="_blank" 
+       style="position: fixed; bottom: 25px; right: 25px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="35" alt="WhatsApp">
+    </a>
+
+    <script>
+    window.onload = function() {
+        const empresa = localStorage.getItem('empresaSeleccionada');
+        const cedula = localStorage.getItem('cedulaUsuario');
+        
+        if(!empresa || !cedula) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        document.getElementById('saludoFondo').innerText = `Ofertas Exclusivas para asociados de ${empresa}`;
+        actualizarContadorUI();
+    }
+
+    function filtrarCategoria(categoria, boton) {
+        document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
+        boton.classList.add('active');
+
+        const productos = document.querySelectorAll('.producto-card');
+        productos.forEach(producto => {
+            if (categoria === 'Todos' || producto.getAttribute('data-categoria') === categoria) {
+                producto.style.display = 'flex';
+            } else {
+                producto.style.display = 'none';
+            }
+        });
+    }
+
+    function guardarDetalle(nombre, precio, imagen) {
+        localStorage.setItem('producto_nombre', nombre);
+        localStorage.setItem('producto_precio', precio);
+        localStorage.setItem('producto_imagen', imagen);
+    }
+
+    // NUEVA LÓGICA DE CARRITO MULTIPRODUCTO
+    function agregarAlCarrito(nombre, precio, imagen) {
+        // Obtener carrito actual o crear uno vacío
+        let carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+        
+        // Crear el objeto del nuevo producto
+        const nuevoProducto = {
+            id: Date.now(), // ID único para poder borrarlo luego
+            nombre: nombre,
+            precio: precio,
+            imagen: imagen
+        };
+
+        // Agregar al arreglo
+        carrito.push(nuevoProducto);
+        
+        // Guardar en LocalStorage
+        localStorage.setItem('carritoSISpos', JSON.stringify(carrito));
+        
+        // Notificar y actualizar UI
+        alert(`✅ ${nombre} añadido al carrito.`);
+        actualizarContadorUI();
+    }
+
+    function actualizarContadorUI() {
+        const carrito = JSON.parse(localStorage.getItem('carritoSISpos')) || [];
+        const contador = document.getElementById('contador-carrito');
+        
+        if(carrito.length > 0) {
+            contador.style.display = 'flex';
+            contador.innerText = carrito.length;
+        } else {
+            contador.style.display = 'none';
+        }
+    }
+    </script>
+</body>
+</html>
